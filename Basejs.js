@@ -473,7 +473,7 @@ Basejs.prototype.toggle = function () {
 	return this;
 };
 
-获取某一个元素是其父元素的第几个知元素。从0开始。
+//获取某一个元素是其父元素的第几个知元素。从0开始。
 Basejs.prototype.index = function () {
 	var children = this.elements[0].parentNode.children;
 	for (var i = 0; i < children.length; i ++) {
@@ -499,6 +499,24 @@ Basejs.prototype.prev = function () {
 	
 	return this;
 }
+
+
+
+
+//图片延迟加载（在可视区时加载）
+//问题1：将xsrc地址替换到src中去
+//当图片进入到可见区域的时候，将图片的xsrc的地址替换到src即可
+//alert($('.wait_load').eq(0).attr('xsrc'));
+//$('.wait_load').eq(0).attr('src', $('.wait_load').eq(0).attr('xsrc'));
+
+
+//问题2：获取图片元素到最外层顶点元素的距离
+//alert(offsetTop($('.wait_load').first()));
+
+//问题3：获取页面可视区域的最低点的位置
+//alert(getInner().height + getScroll().top);
+
+
 //--------------------设置一个接受插件的方法-----------------
 //其实也就是一个添加原形函数的方法。
 //接受两个参数一个是函数的名字，字符串，一个是函数。
@@ -515,7 +533,9 @@ var $ =function(args){
 var chj={};
 chj.tools = {};
 
-
+//最好就把css，js等需要加载先的东西放在addDomLoaded之前，免得不必要的麻烦。
+//如<link rel="stylesheet" type="text/css" href="...css">
+// 如<script src="js/Basejs.js"></script>
 chj.tools.addDomLoaded=function (fn) {
 	if (document.addEventListener) { //W3C
 		chj.tools.addEvent(document, 'DOMContentLoaded', function () {
@@ -726,4 +746,17 @@ chj.tools.ajax = function(obj) {
 			alert('获取数据错误！错误代号：' + xhr.status + '，错误信息：' + xhr.statusText);
 		}	
 	}
+}
+
+
+//获取某一个元素到最外层顶点的位置(距离body顶部的边框距离)
+chj.tools.offsetTop = function (element) {
+
+	var top = element.offsetTop;
+	var parent = element.offsetParent;
+	while (parent != null) {
+		top += parent.offsetTop;
+		parent = parent.offsetParent;
+	}
+	return top;
 }
