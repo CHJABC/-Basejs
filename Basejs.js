@@ -516,6 +516,21 @@ Basejs.prototype.prev = function () {
 //问题3：获取页面可视区域的最低点的位置
 //alert(getInner().height + getScroll().top);
 
+//一个参数时获取某一个节点的属性
+//两个参数时设置某个属性值
+//用于自定义属性。（自定义属性使用obj.自定义属性名在获取值在非ie和ie9及以上不可行。）
+Basejs.prototype.attr = function (attr, value) {
+	var length =this.elements.length;
+	for (var i = 0; i < length; i ++) {
+		if (arguments.length == 1) {
+			return this.elements[i].getAttribute(attr);
+		} else if (arguments.length == 2) {
+			this.elements[i].setAttribute(attr, value);
+		}
+	}
+	return this;
+};
+
 
 //--------------------设置一个接受插件的方法-----------------
 //其实也就是一个添加原形函数的方法。
