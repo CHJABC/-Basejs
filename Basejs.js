@@ -473,13 +473,17 @@ Basejs.prototype.toggle = function () {
 	return this;
 };
 
-//获取某一个元素是其父元素的第几个知元素。从0开始。
+//获取某一个元素是其父元素的第几个元素。从0开始。
 Basejs.prototype.index = function () {
 	var children = this.elements[0].parentNode.children;
 	for (var i = 0; i < children.length; i ++) {
 		if (this.elements[0] == children[i]) return i;
 	}
 };
+
+
+
+
 
 //只允许一个元素节点对象获取下一个兄弟元素节点对象。
 Basejs.prototype.next = function () {
@@ -774,4 +778,41 @@ chj.tools.offsetTop = function (element) {
 		parent = parent.offsetParent;
 	}
 	return top;
+}
+
+
+//获取某一个节点的上一个节点的索引
+//接受两个参数，current接受当前节点索引数值，parent接受当前节点的父元素对象。
+chj.tools.prevIndex = function(current, parent) {
+	var length = parent.children.length;
+	if (current == 0) return length - 1;
+	return current - 1;
+}
+
+//获取某一个节点的下一个节点的索引
+//接受两个参数，current接受当前节点索引数值，parent接受当前节点的父元素对象。
+chj.tools.nextIndex = function(current, parent) {
+	var length = parent.children.length;
+	if (current == length - 1) return 0;
+	return current + 1;
+}
+
+
+//通过创建一个新元素，计算元素的offsetwidth和clientwidth属性的差值算出滚动条的宽度。
+//函数直接返回滚动条的宽度。
+//元素的表框大小会算到滚动条的宽度上。所以在styles里重置了border属性
+chj.tools.getScrollbarWidth = function() {
+    var oP = document.createElement('p'),
+        styles = {
+            width: '100px',
+            height: '100px',
+            overflowY: 'scroll',
+            border: '0px',
+        }, i, scrollbarWidth;
+    for (i in styles) oP.style[i] = styles[i];
+    document.body.appendChild(oP);
+    scrollbarWidth = oP.offsetWidth - oP.clientWidth;
+    // oP.remove();//ie不支持该删除节点方法
+    oP.parentNode.removeChild(oP);
+    return scrollbarWidth;
 }
