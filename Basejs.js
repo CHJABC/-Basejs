@@ -523,6 +523,8 @@ Basejs.prototype.prev = function () {
 //一个参数时获取某一个节点的属性
 //两个参数时设置某个属性值
 //用于自定义属性。（自定义属性使用obj.自定义属性名在获取值在非ie和ie9及以上不可行。）
+
+//该方法获取不了元素的style属性值（并且批量添加属性），所以需要使用cssTest属性。
 Basejs.prototype.attr = function (attr, value) {
 	var length =this.elements.length;
 	for (var i = 0; i < length; i ++) {
@@ -815,4 +817,65 @@ chj.tools.getScrollbarWidth = function() {
     // oP.remove();//ie不支持该删除节点方法
     oP.parentNode.removeChild(oP);
     return scrollbarWidth;
+}
+
+/*
+改动画是结合了tween类和window.requestAnimationFrame（）封装的动画函数。
+接受四个参数。
+obj为元素对象。
+attrs为需要改变的属性对象。格式为一个属性，和一个属性目标值。
+如：{"width":200,"height":200}
+duration为完成动画的时长。
+fx为tween类里的函数。（接受一个字符串）
+
+chj.tools.animation(div,{"width":1000,"opacity":100,"height":600},2000,"easeInBounce");
+总是觉得不流畅
+感觉cancelAnimationFrame（）是无效的
+
+*/
+
+chj.tools.animation=function(obj, attrs, duration, fx) {//运动对象，属性，持续时间，运动方式，回调函数
+    window.cancelAnimationFrame(obj.iTimer);       
+    var startTime = new Date().getTime();
+    var j = {};
+    for (var attr in attrs) {
+        j[attr] = {};
+        if (attr == 'opacity') {    //把元素原来的属性值赋值给初始值
+            j[attr].b = Math.round(chj.tools.getStyle(obj,attr) * 100);     
+        } else {
+            j[attr].b = parseInt(chj.tools.getStyle(obj,attr));
+        }
+        j[attr].c = attrs[attr] - j[attr].b;     //获得改变值
+    }
+    var d = duration;
+    run =function() {
+        var t = new Date().getTime() - startTime;
+        if (t >= d) {
+            t = d;
+            for (var attr in attrs) {
+                var v = Tween[fx](t, j[attr].b, j[attr].c, d);
+                if (attr == 'opacity') {
+                     chj.tools.setOpacity(obj ,v);
+                } else {
+                    obj.style[attr] = v + 'px';
+                }
+            }
+            
+        }
+        if(t<d){
+            for (var attr in attrs) {
+                var v = Tween[fx](t, j[attr].b, j[attr].c, d);
+                if (attr == 'opacity') {
+                    obj.style.opacity = v / 100;
+                    obj.style.filter = 'alpha(opacity='+v+')';
+                } else {
+                    obj.style[attr] = v + 'px';
+                }
+            }
+            window.requestAnimationFrame(arguments.callee);
+        }
+        
+    };
+    obj.iTimer=window.requestAnimationFrame(run);
+    
 }
