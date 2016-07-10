@@ -770,6 +770,49 @@ chj.tools.ajax = function(obj) {
 }
 
 
+
+//from 序列化
+//方法接受一个form对象
+//以对象的方式返回该form对象的有用字段。直接就可以把该方法返回的对象赋值给ajax封装的data。
+	//不发送type 是reset、submit、file 和button 以及字段集；
+	//多选选择框中的每个选中的值单独一个条目；
+	//对于<select>，如果有value 值，就指定为value 作为发送的值。如果没有，就指定text 值。
+chj.tools.lsform = function(form){
+	var parts = {};
+	for (var i = 0; i < form.elements.length; i ++) {
+		var filed = form.elements[i];
+		switch (filed.type) {
+			case undefined :
+			case 'submit' :
+			case 'reset' :
+			case 'file' :
+			case 'button' :
+				break;
+			case 'radio' :
+			case 'checkbox' : 
+				if (!filed.selected) break;
+			case 'select-one' : 
+			case 'select-multiple' :
+				for (var j = 0; j < filed.options.length; j ++) {
+					var option = filed.options[j];
+					if (option.selected) {
+						var optValue = '';
+						if (option.hasAttribute) {       //非ie 判断是否option是否设置了value属性
+							optValue = (option.hasAttribute('value') ? option.value : option.text);
+						} else {                        //ie
+							optValue = (option.attributes('value').specified ? option.value : option.text);
+						}
+						parts[filed.name] = optValue; 
+					}
+				}
+				break;
+			default :
+				parts[filed.name] = filed.value;
+		}
+	}
+	return parts;
+}
+
 //获取某一个元素到最外层顶点的位置(距离body顶部的边框距离)
 chj.tools.offsetTop = function (element) {
 

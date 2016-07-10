@@ -5,6 +5,9 @@ ie8，ie9等不支持的浏览器通过setTiemout（）方式兼容。
 
 也支持window.cancelAnimationFrame（id）方法取消。
 
+感觉这个方法还是不好用，感觉是cancelAnimationFrame（）清除不了。
+可能是不会用，感觉卡的一比（在用的是setTimeout的时候）
+
 */
 
 
